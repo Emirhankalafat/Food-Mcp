@@ -1,42 +1,38 @@
-import pool from '../config/database.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
+// Gerekli modülleri import ediyoruz
+import pool from '../config/database.js';  // Veritabanı bağlantısı
+import bcrypt from 'bcryptjs';  // Şifre hashleme
+import jwt from 'jsonwebtoken';  // JWT token oluşturma
+import crypto from 'crypto';  // Rastgele API anahtarı oluşturma
 
 // API anahtarı oluşturma fonksiyonu
 const generateApiKey = () => {
+  // 64 karakter sınırına uymak için 32 byte (64 hex karakter) oluşturuyoruz
   return crypto.randomBytes(32).toString('hex');
 };
 
+// Kullanıcı kaydı fonksiyonu
 export const register = async (req, res) => {
   try {
-    const {
-      email,
-      password,
-      name,
-      gender,
-      weight,
-      height
-    } = req.body;
+    // Request body'den verileri alıyoruz
+    const { email, password, name, gender, weight, height } = req.body;
 
-    // Email kontrolü
+    // Email adresiyle kayıtlı kullanıcı var mı kontrol ediyoruz
     const existingUserQuery = 'SELECT * FROM users WHERE email = $1';
     const existingUserResult = await pool.query(existingUserQuery, [email]);
 
+    // Eğer varsa hata döndürüyoruz
     if (existingUserResult.rows.length > 0) {
-      return res.status(400).json({
-        message: 'Bu email zaten kullanımda'
-      });
+      return res.status(400).json({ message: 'Bu email zaten kullanımda' });
     }
 
-    // Şifre hashleme
+    // Şifreyi hashliyoruz
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // API anahtarı oluştur
+    // API anahtarı oluşturuyoruz
     const apikey = generateApiKey();
 
-    // Kullanıcı ekleme
+    // Kullanıcıyı veritabanına ekliyoruz
     const insertQuery = `
       INSERT INTO users 
       (email, password, name, gender, weight, height, apikey)
@@ -44,29 +40,18 @@ export const register = async (req, res) => {
       RETURNING id, email, name, apikey
     `;
 
-    const values = [
-      email,
-      hashedPassword,
-      name,
-      gender,
-      weight,
-      height,
-      apikey
-    ];
-
+    const values = [email, hashedPassword, name, gender, weight, height, apikey];
     const result = await pool.query(insertQuery, values);
     const newUser = result.rows[0];
 
-    // JWT token oluştur
+    // JWT token oluşturuyoruz
     const token = jwt.sign(
-      {
-        id: newUser.id,
-        email: newUser.email
-      },
+      { id: newUser.id, email: newUser.email },
       process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
 
+    // Başarılı yanıt döndürüyoruz
     res.status(201).json({
       message: 'Kullanıcı başarıyla oluşturuldu',
       user: newUser,
@@ -81,40 +66,42 @@ export const register = async (req, res) => {
   }
 };
 
+// Login fonksiyonu
 export const login = async (req, res) => {
   try {
+    // Email ve şifreyi alıyoruz
     const { email, password } = req.body;
 
-    // Kullanıcıyı bul
+    // Kullanıcıyı email ile arıyoruz
     const query = 'SELECT * FROM users WHERE email = $1';
     const result = await pool.query(query, [email]);
 
+    // Kullanıcı yoksa hata döndürüyoruz
     if (result.rows.length === 0) {
       return res.status(400).json({ message: 'Kullanıcı bulunamadı' });
     }
 
     const user = result.rows[0];
 
-    // Şifreyi kontrol et
+    // Şifreyi kontrol ediyoruz
     const isMatch = await bcrypt.compare(password, user.password);
 
+    // Şifre yanlışsa hata döndürüyoruz
     if (!isMatch) {
       return res.status(400).json({ message: 'Geçersiz şifre' });
     }
 
-    // JWT token oluştur
+    // JWT token oluşturuyoruz
     const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email
-      },
+      { id: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
 
-    // Şifreyi yanıttan çıkar
+    // Şifreyi yanıttan çıkarıyoruz
     delete user.password;
 
+    // Başarılı yanıt döndürüyoruz
     res.json({
       message: 'Giriş başarılı',
       user,
@@ -129,22 +116,24 @@ export const login = async (req, res) => {
   }
 };
 
-// API anahtarını yeniden oluşturmak için endpoint (isteğe bağlı)
+// API anahtarını yenileme fonksiyonu
 export const regenerateApiKey = async (req, res) => {
   try {
     const userId = req.user.id; // JWT middleware'inden gelen kullanıcı ID'si
     
-    // Yeni API anahtarı oluştur
+    // Yeni API anahtarı oluşturuyoruz
     const newApiKey = generateApiKey();
     
-    // Veritabanında güncelle
+    // Veritabanında güncelliyoruz
     const updateQuery = 'UPDATE users SET apikey = $1 WHERE id = $2 RETURNING id, email, name, apikey';
     const result = await pool.query(updateQuery, [newApiKey, userId]);
     
+    // Kullanıcı yoksa hata döndürüyoruz
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Kullanıcı bulunamadı' });
     }
     
+    // Başarılı yanıt döndürüyoruz
     res.json({
       message: 'API anahtarı başarıyla yenilendi',
       user: result.rows[0]

@@ -2,12 +2,19 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-// Veritabanı bağlantısını test etmek için
-import { testDatabaseConnection } from './config/database.js';
+// Veritabanı bağlantısı
+import pool from './config/database.js';
 
 // Rotaları import et
-// import userRoutes from './routes/userRoutes.js';
-// import foodRoutes from './routes/foodRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import foodRoutes from './routes/foodRoutes.js';
+
+// Hata middleware'lerini import et
+import { errorHandler, notFound } from './middleware/errorMiddleware.js';
+
+// Rate limiter middleware'i import et
+import { rateLimiter } from './middleware/authMiddleware.js';
 
 // Çevre değişkenlerini yükle
 dotenv.config();
@@ -16,34 +23,47 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Veritabanı bağlantısını test et
+const testDatabaseConnection = async () => {
+  try {
+    const client = await pool.connect();
+    console.log('PostgreSQL veritabanına başarıyla bağlandı');
+    client.release();
+  } catch (error) {
+    console.error('Veritabanı bağlantı hatası:', error);
+    process.exit(1); // Bağlantı hatası durumunda uygulamayı sonlandır
+  }
+};
+
+testDatabaseConnection();
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Veritabanı bağlantısını test et
-testDatabaseConnection();
+// Rate limiter - tüm API istekleri için
+app.use('/api', rateLimiter(100, 15 * 60 * 1000)); // 15 dakikada en fazla 100 istek
 
 // Rotaları kullan
-// app.use('/api/users', userRoutes);
-// app.use('/api/foods', foodRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/foods', foodRoutes);
 
-// Temel endpoint
+// Ana endpoint
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Diet Tracker API', 
+    version: '1.0.0',
     status: 'Running' 
   });
 });
 
+// 404 handler
+app.use(notFound);
+
 // Hata yakalama middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    message: 'Bir hata oluştu', 
-    error: err.message 
-  });
-});
+app.use(errorHandler);
 
 // Sunucuyu başlat
 app.listen(PORT, () => {

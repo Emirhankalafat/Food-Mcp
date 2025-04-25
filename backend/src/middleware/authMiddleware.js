@@ -53,11 +53,7 @@ export const protectApiKey = async (req, res, next) => {
 
   try {
     // API key kontrolü
-    const query = `
-      SELECT u.* FROM users u
-      JOIN user_mcp_keys umk ON u.id = umk.user_id
-      WHERE umk.api_key = $1 AND umk.created_at > NOW() - INTERVAL '365 days'
-    `;
+    const query = 'SELECT * FROM users WHERE api_key = $1';
     const result = await pool.query(query, [apiKey]);
 
     if (result.rows.length === 0) {
@@ -76,19 +72,7 @@ export const protectApiKey = async (req, res, next) => {
   }
 };
 
-// Rol bazlı yetkilendirme middleware
-export const checkRole = (roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ 
-        message: 'Bu işlemi yapmaya yetkiniz yok' 
-      });
-    }
-    next();
-  };
-};
-
-// Rate limiting middleware
+// İsteği sınırlama middleware (Rate limiting)
 export const rateLimiter = (limit = 100, windowMs = 15 * 60 * 1000) => {
   const requests = new Map();
 
@@ -97,7 +81,7 @@ export const rateLimiter = (limit = 100, windowMs = 15 * 60 * 1000) => {
     const now = Date.now();
     const windowStart = now - windowMs;
 
-    // Temizlik yap
+    // Temizlik yap - eski kayıtları sil
     for (const [key, time] of requests.entries()) {
       if (time < windowStart) {
         requests.delete(key);
@@ -105,15 +89,37 @@ export const rateLimiter = (limit = 100, windowMs = 15 * 60 * 1000) => {
     }
 
     // İstek sayısını kontrol et
-    const userRequests = requests.get(ip) || 0;
-    if (userRequests >= limit) {
+    const userRequests = requests.get(ip) || [];
+    const recentRequests = userRequests.filter(time => time > windowStart);
+    
+    if (recentRequests.length >= limit) {
       return res.status(429).json({ 
         message: 'Çok fazla istek. Lütfen daha sonra tekrar deneyin.' 
       });
     }
 
     // İstek sayısını güncelle
-    requests.set(ip, userRequests + 1);
+    recentRequests.push(now);
+    requests.set(ip, recentRequests);
+    next();
+  };
+};
+
+// Rol bazlı yetkilendirme middleware (gelecekte kullanılabilir)
+export const checkRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user || !req.user.role) {
+      return res.status(403).json({ 
+        message: 'Yetkilendirme hatası: Kullanıcı rolü bulunamadı' 
+      });
+    }
+    
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ 
+        message: 'Bu işlemi yapmaya yetkiniz yok' 
+      });
+    }
+    
     next();
   };
 };
