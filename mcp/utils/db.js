@@ -1,12 +1,17 @@
-import pg from "pg";
-const { Pool } = pg;
+import pg from "pg"; 
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// .env dosyasını yükle (her koşulda doğru path ile)
+// .env dosyasını yükle
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
+// URL formatını doğrula
+console.log("Bağlantı URL'i yükleniyor...");
+if (!process.env.DATABASE_URL) {
+  console.error("HATA: DATABASE_URL çevre değişkeni tanımlanmamış!");
+}
 
 // Veritabanı bağlantı havuzu
 export const pool = new Pool({
@@ -14,7 +19,7 @@ export const pool = new Pool({
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
 });
 
-// Bağlantıyı test et (Claude ile MCP geliştirmesi için faydalı)
+// Bağlantıyı test et
 export async function testConnection() {
   try {
     const client = await pool.connect();
@@ -23,11 +28,22 @@ export async function testConnection() {
     return true;
   } catch (err) {
     console.error("❌ Veritabanı bağlantı hatası:", err.message);
+    console.error("DATABASE_URL formatını kontrol edin (şifre kısmı gizlenmiştir):");
+    
+    // URL'i güvenli bir şekilde görüntüle (şifreyi maskele)
+    if (process.env.DATABASE_URL) {
+      const safeUrl = process.env.DATABASE_URL.replace(
+        /postgresql:\/\/([^:]+):([^@]+)@/,
+        "postgresql://$1:******@"
+      );
+      console.error(safeUrl);
+    }
+    
     return false;
   }
 }
 
-// Tablo kontrol aracı (opsiyonel)
+// Tablo kontrol aracı
 export async function checkTables(requiredTables = ["users", "food_logs", "food_items"]) {
   try {
     const result = await pool.query(`
