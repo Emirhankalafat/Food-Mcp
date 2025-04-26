@@ -158,17 +158,25 @@ export const searchFoodItems = async (req, res) => {
 };
 
 // ➔ Sık Kullanılan Besinler
+
 export const getFrequentFoods = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { limit = 10 } = req.query;
+
+    let limit = 10; // default
+    if (req.query.limit) {
+      limit = Number(req.query.limit);
+      if (isNaN(limit) || limit <= 0) {
+        limit = 10; // eğer hatalıysa yine default
+      }
+    }
 
     const result = await pool.query(`
       SELECT 
         fi.name, 
-        COUNT(*) as frequency, 
-        ROUND(AVG(fi.calories)::numeric, 2) as avg_calories, 
-        ROUND(AVG(fi.quantity)::numeric, 2) as avg_quantity, 
+        COUNT(*) AS frequency, 
+        ROUND(AVG(fi.calories)::numeric, 2) AS avg_calories, 
+        ROUND(AVG(fi.quantity)::numeric, 2) AS avg_quantity, 
         fi.unit
       FROM food_items fi
       JOIN food_logs fl ON fi.food_log_id = fl.id
@@ -178,12 +186,11 @@ export const getFrequentFoods = async (req, res) => {
       LIMIT $2
     `, [userId, limit]);
 
-    // Verileri düzenle
     const frequentFoods = result.rows.map(row => ({
       name: row.name,
-      frequency: parseInt(row.frequency, 10),
-      avg_calories: parseFloat(row.avg_calories),
-      avg_quantity: parseFloat(row.avg_quantity),
+      frequency: Number(row.frequency.toString()),
+      avg_calories: row.avg_calories !== null ? Number(row.avg_calories) : 0,
+      avg_quantity: row.avg_quantity !== null ? Number(row.avg_quantity) : 0,
       unit: row.unit
     }));
 
@@ -193,6 +200,7 @@ export const getFrequentFoods = async (req, res) => {
     res.status(500).json({ message: 'Sunucu hatası', error: error.message });
   }
 };
+
 
 // ➔ Besin Güncelle
 export const updateFoodItem = async (req, res) => {

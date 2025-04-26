@@ -5,7 +5,7 @@ import { format, addDays, subDays, parseISO } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import AddFood from '../components/food/AddFood';
 import FoodList from '../components/food/FoodList';
-import { getDailyFoods, searchFoods, getFrequentFoods } from '../api/foodService';
+import { getDailyFoods, searchFoods, getFrequentFoods, addFoodEntry } from '../api/foodService';
 import { FaUtensils, FaCalendarAlt, FaChevronLeft, FaChevronRight, FaSearch, FaStar } from 'react-icons/fa';
 
 const FoodJournalPage = () => {
@@ -18,6 +18,11 @@ const FoodJournalPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [frequentFoods, setFrequentFoods] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  
+  // Modal için yeni state'ler
+  const [selectedMealType, setSelectedMealType] = useState('kahvaltı');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedFood, setSelectedFood] = useState(null);
   
   const fetchFoods = async () => {
     try {
@@ -36,7 +41,7 @@ const FoodJournalPage = () => {
   const fetchFrequentFoods = async () => {
     try {
       setIsLoading(true);
-      const data = await getFrequentFoods({ limit: 15 });
+      const data = await getFrequentFoods(15);
       setFrequentFoods(data.frequentFoods || []);
     } catch (err) {
       console.error('Sık kullanılan besinler alınamadı:', err);
@@ -91,9 +96,28 @@ const FoodJournalPage = () => {
   };
   
   const handleAddFrequentFood = (food) => {
-    // Formata dönüştürme yapılabilir
-    console.log("Sık kullanılan besin eklendi:", food);
-    // Buraya ekle fonksiyonu eklenebilir
+    setSelectedFood(food);
+    setIsAddModalOpen(true);
+  };
+  
+  const confirmAddFood = async () => {
+    if (!selectedFood) return;
+    
+    try {
+      await addFoodEntry({
+        name: selectedFood.name,
+        calories: selectedFood.avg_calories,
+        quantity: selectedFood.avg_quantity,
+        unit: selectedFood.unit,
+        mealType: selectedMealType,
+        date: selectedDate
+      });
+      fetchFoods();
+      setIsAddModalOpen(false);
+    } catch (err) {
+      console.error('Besin eklenirken hata:', err);
+      setError('Besin eklenirken bir hata oluştu');
+    }
   };
   
   const displayDate = format(parseISO(selectedDate), 'd MMMM yyyy, EEEE', { locale: tr });
@@ -277,6 +301,31 @@ const FoodJournalPage = () => {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Modal */}
+      {isAddModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Besin Ekle</h3>
+            <div className="form-group">
+              <label>Öğün Tipi</label>
+              <select 
+                value={selectedMealType} 
+                onChange={(e) => setSelectedMealType(e.target.value)}
+              >
+                <option value="kahvaltı">Kahvaltı</option>
+                <option value="öğlen">Öğle Yemeği</option>
+                <option value="akşam">Akşam Yemeği</option>
+                <option value="ara öğün">Ara Öğün</option>
+              </select>
+            </div>
+            <div className="modal-actions">
+              <button onClick={confirmAddFood}>Ekle</button>
+              <button onClick={() => setIsAddModalOpen(false)}>İptal</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

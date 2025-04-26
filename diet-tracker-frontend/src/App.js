@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
 // Pages
@@ -13,6 +13,7 @@ import FoodJournalPage from './pages/FoodJournalPage';
 // Components
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
+import PrivateRoute from './components/PrivateRoute'; // <-- Bunu ekledik!!
 
 // Styles
 import './App.css';
@@ -25,12 +26,17 @@ function App() {
           <Navbar />
           <main className="content">
             <Routes>
+              {/* Herkese açık sayfalar */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/food-journal" element={<FoodJournalPage />} />
+
+              {/* Giriş yapmış kullanıcılar için korumalı sayfalar */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/food-journal" element={<FoodJournalPage />} />
+              </Route>
             </Routes>
           </main>
           <Footer />
