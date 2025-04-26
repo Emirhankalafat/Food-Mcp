@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/AuthPages.css';
 import Login from '../components/auth/Login';
 
 const LoginPage = () => {

@@ -1,227 +1,229 @@
 // src/pages/ProfilePage.jsx
-import React, { useState, useEffect } from 'react';
-import { getUserProfile, updateUserProfile } from '../api/userService';
+import React from 'react';
+import '../styles/ProfilePage.css';
 import { useAuth } from '../context/AuthContext';
+import Profile from '../components/profile/Profile';
+import { FaUser, FaLock, FaTrashAlt } from 'react-icons/fa';
+import { useState } from 'react';
+import { changePassword, deleteAccount } from '../api/userService';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
-  const { user: authUser } = useAuth();
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    weight: '',
-    height: '',
-    gender: '',
+  const { user: authUser, logout } = useAuth();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('profile');
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   });
-  
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getUserProfile();
-        setUser(data);
-        setFormData({
-          name: data.name,
-          weight: data.weight,
-          height: data.height,
-          gender: data.gender,
-        });
-      } catch (err) {
-        console.error('Profil bilgisi alınamadı:', err);
-        setError('Profil bilgileri alınırken bir hata oluştu');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    if (authUser) {
-      fetchProfile();
-    }
-  }, [authUser]);
-  
-  const handleChange = (e) => {
-    const value = e.target.name === 'weight' || e.target.name === 'height'
-      ? parseFloat(e.target.value)
-      : e.target.value;
-    
-    setFormData({
-      ...formData,
-      [e.target.name]: value,
+  const [deleteForm, setDeleteForm] = useState({
+    password: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handlePasswordChange = (e) => {
+    setPasswordForm({
+      ...passwordForm,
+      [e.target.name]: e.target.value
     });
   };
-  
-  const handleSubmit = async (e) => {
+
+  const handleDeleteChange = (e) => {
+    setDeleteForm({
+      ...deleteForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const submitPasswordChange = async (e) => {
     e.preventDefault();
     setError('');
-    
+    setSuccessMessage('');
+
+    // Parola doğrulama
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setError('Yeni parolalar eşleşmiyor');
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      setError('Yeni parola en az 6 karakter olmalıdır');
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const updatedUser = await updateUserProfile(formData);
-      setUser(updatedUser.user);
-      setIsEditing(false);
+      await changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword
+      });
+      
+      setSuccessMessage('Parola başarıyla değiştirildi');
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
     } catch (err) {
-      console.error('Profil güncelleme hatası:', err);
-      setError(err.response?.data?.message || 'Profil güncellenirken bir hata oluştu');
+      setError(err.response?.data?.message || 'Parola değiştirilirken bir hata oluştu');
     } finally {
       setIsLoading(false);
     }
   };
-  
-  if (isLoading && !user) {
-    return <div className="loading">Yükleniyor...</div>;
-  }
-  
-  if (error && !user) {
-    return <div className="error-message">{error}</div>;
-  }
-  
-  // BMI hesaplama
-  const calculateBMI = () => {
-    if (!user.height || !user.weight) return null;
-    
-    const heightInMeters = user.height / 100;
-    const bmi = user.weight / (heightInMeters * heightInMeters);
-    return bmi.toFixed(1);
+
+  const submitDeleteAccount = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!window.confirm('Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await deleteAccount(deleteForm);
+      logout();
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Hesap silinirken bir hata oluştu');
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
-  const getBMICategory = (bmi) => {
-    if (!bmi) return '';
-    
-    if (bmi < 18.5) return 'Zayıf';
-    if (bmi < 25) return 'Normal';
-    if (bmi < 30) return 'Fazla Kilolu';
-    return 'Obez';
-  };
-  
-  const bmi = calculateBMI();
-  const bmiCategory = getBMICategory(bmi);
-  
-  // src/pages/ProfilePage.jsx (devamı)
+
+  if (!authUser) {
+    return (
+      <div className="not-authenticated">
+        <h2>Oturum Açılmadı</h2>
+        <p>Bu sayfayı görüntülemek için lütfen giriş yapın.</p>
+        <button onClick={() => navigate('/login')} className="btn-primary">
+          Giriş Yap
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="profile-container">
-      <h1>Profil</h1>
-      
-      {error && <p className="error">{error}</p>}
-      
-      {isEditing ? (
-        <form onSubmit={handleSubmit} className="profile-form">
-          <div className="form-group">
-            <label htmlFor="name">İsim</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="gender">Cinsiyet</label>
-            <select
-              id="gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-            >
-              <option value="erkek">Erkek</option>
-              <option value="kadın">Kadın</option>
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="weight">Kilo (kg)</label>
-            <input
-              type="number"
-              id="weight"
-              name="weight"
-              step="0.1"
-              value={formData.weight}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="height">Boy (cm)</label>
-            <input
-              type="number"
-              id="height"
-              name="height"
-              value={formData.height}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="profile-actions">
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
-            </button>
-            <button 
-              type="button" 
-              onClick={() => setIsEditing(false)}
-              className="cancel-btn"
-            >
-              İptal
-            </button>
-          </div>
-        </form>
-      ) : (
-        <div className="profile-info">
-          <div className="profile-detail">
-            <span className="label">İsim:</span>
-            <span className="value">{user.name}</span>
-          </div>
-          
-          <div className="profile-detail">
-            <span className="label">E-posta:</span>
-            <span className="value">{user.email}</span>
-          </div>
-          
-          <div className="profile-detail">
-            <span className="label">Cinsiyet:</span>
-            <span className="value">
-              {user.gender === 'erkek' ? 'Erkek' : 'Kadın'}
-            </span>
-          </div>
-          
-          <div className="profile-detail">
-            <span className="label">Kilo:</span>
-            <span className="value">{user.weight} kg</span>
-          </div>
-          
-          <div className="profile-detail">
-            <span className="label">Boy:</span>
-            <span className="value">{user.height} cm</span>
-          </div>
-          
-          {bmi && (
-            <div className="profile-bmi">
-              <div className="bmi-value">
-                <span className="label">BMI:</span>
-                <span className="value">{bmi}</span>
+    <div className="profile-page-container">
+      <div className="profile-tabs">
+        <button 
+          className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
+          onClick={() => setActiveTab('profile')}
+        >
+          <FaUser /> Profil Bilgileri
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'password' ? 'active' : ''}`}
+          onClick={() => setActiveTab('password')}
+        >
+          <FaLock /> Parola Değiştir
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'delete' ? 'active' : ''}`}
+          onClick={() => setActiveTab('delete')}
+        >
+          <FaTrashAlt /> Hesabı Sil
+        </button>
+      </div>
+
+      <div className="profile-content">
+        {activeTab === 'profile' && (
+          <Profile />
+        )}
+
+        {activeTab === 'password' && (
+          <div className="password-change-container">
+            <h2>Parola Değiştir</h2>
+            
+            {error && <div className="error-message">{error}</div>}
+            {successMessage && <div className="success-message">{successMessage}</div>}
+            
+            <form onSubmit={submitPasswordChange}>
+              <div className="form-group">
+                <label htmlFor="currentPassword">Mevcut Parola</label>
+                <input
+                  type="password"
+                  id="currentPassword"
+                  name="currentPassword"
+                  value={passwordForm.currentPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
               </div>
-              <div className="bmi-category">
-                <span className="label">Durum:</span>
-                <span className={`value bmi-${bmiCategory.toLowerCase().replace(' ', '-')}`}>
-                  {bmiCategory}
-                </span>
+              
+              <div className="form-group">
+                <label htmlFor="newPassword">Yeni Parola</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                  value={passwordForm.newPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
               </div>
+              
+              <div className="form-group">
+                <label htmlFor="confirmPassword">Yeni Parola (Tekrar)</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={passwordForm.confirmPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                className="btn-primary"
+                disabled={isLoading}
+              >
+                {isLoading ? 'İşleniyor...' : 'Parolayı Değiştir'}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {activeTab === 'delete' && (
+          <div className="delete-account-container">
+            <h2>Hesabı Sil</h2>
+            
+            <div className="warning-box">
+              <h3>Uyarı!</h3>
+              <p>Hesabınızı silmek üzeresiniz. Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.</p>
             </div>
-          )}
-          
-          <button 
-            onClick={() => setIsEditing(true)}
-            className="edit-btn"
-          >
-            Profili Düzenle
-          </button>
-        </div>
-      )}
+            
+            {error && <div className="error-message">{error}</div>}
+            
+            <form onSubmit={submitDeleteAccount}>
+              <div className="form-group">
+                <label htmlFor="password">Parolanızı Girin</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={deleteForm.password}
+                  onChange={handleDeleteChange}
+                  required
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                className="btn-danger"
+                disabled={isLoading}
+              >
+                {isLoading ? 'İşleniyor...' : 'Hesabımı Kalıcı Olarak Sil'}
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

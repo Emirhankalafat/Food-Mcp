@@ -36,3 +36,7 @@ export const updateFoodItem = async (id, foodData) => {
     const response = await axios.delete(`/foods/${id}`);
     return response.data;
   };
+export const getFrequentFoods = async () => {
+  const response = await axios.get('/foods/frequent');
+  return response.data;
+}
