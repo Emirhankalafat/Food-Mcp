@@ -13,8 +13,6 @@ import foodRoutes from './routes/foodRoutes.js';
 // Hata middleware'lerini import et
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
-// Rate limiter middleware'i import et
-import { rateLimiter } from './middleware/authMiddleware.js';
 
 // Çevre değişkenlerini yükle
 dotenv.config();
@@ -42,8 +40,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiter - tüm API istekleri için
-app.use('/api', rateLimiter(100, 15 * 60 * 1000)); // 15 dakikada en fazla 100 istek
 
 // Rotaları kullan
 app.use('/api/auth', authRoutes);

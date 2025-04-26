@@ -1,6 +1,6 @@
 // src/components/auth/Login.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
@@ -65,6 +65,10 @@ const Login = () => {
           {isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
         </button>
       </form>
+
+      <p style={{ marginTop: "15px", textAlign: "center" }}>
+        Hesabınız yok mu? <Link to="/register" style={{ color: "#007bff", textDecoration: "none" }}>Kayıt Ol</Link>
+      </p>
     </div>
   );
 };
