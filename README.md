@@ -1,134 +1,175 @@
-Food-Mcp 🥗
-Food-Mcp, kullanıcıların günlük beslenme alışkanlıklarını takip etmelerine ve sağlıklı bir yaşam sürmeleri için gerekli verileri toplamalarına yardımcı olmayı amaçlayan bir uygulamadır. Claude AI entegrasyonu ile sesli komutlar kullanarak besin kayıtlarınızı kolayca yönetebilirsiniz.
-Proje Hakkında
-Bu proje, modern web teknolojileri ve yapay zeka entegrasyonu kullanılarak oluşturulmuş tam kapsamlı bir beslenme takip sistemidir. Kullanıcılar, günlük tükettikleri besinleri kaydedebilir, beslenme alışkanlıklarını analiz edebilir ve vücut ölçümlerini takip edebilir.
-Özellikler
+# 🥗 Food-Mcp: Beslenme Takip Asistanınız
 
-✅ Besin Takibi: Günlük öğünlerinizi kaydedip kalori değerlerini otomatik hesaplayın
-📊 Analiz ve Grafikler: Beslenme verilerinizi çeşitli grafiklerle görselleştirin
-🗓️ Zaman Bazlı Raporlar: Günlük, haftalık ve aylık beslenme raporlarına erişin
-👤 Profil Yönetimi: Kişisel verilerinizi ve vücut ölçümlerinizi güncel tutun
-🤖 Claude AI Entegrasyonu: Sesli komutlar ile veritabanı işlemlerini yapın
-📱 Responsive Tasarım: Her ekran boyutunda kusursuz görünüm ve kullanım
+<div align="center">
+  
+  ![Food-Mcp Logo](https://via.placeholder.com/150x150/4CAF50/FFFFFF?text=Food-Mcp)
+  
+  [![GitHub stars](https://img.shields.io/github/stars/Emirhankalafat/Food-Mcp.svg?style=social&label=Star)](https://github.com/Emirhankalafat/Food-Mcp/stargazers)
+  [![GitHub forks](https://img.shields.io/github/forks/Emirhankalafat/Food-Mcp.svg?style=social&label=Fork)](https://github.com/Emirhankalafat/Food-Mcp/network)
+  [![GitHub issues](https://img.shields.io/github/issues/Emirhankalafat/Food-Mcp.svg)](https://github.com/Emirhankalafat/Food-Mcp/issues)
+  [![GitHub license](https://img.shields.io/github/license/Emirhankalafat/Food-Mcp.svg)](https://github.com/Emirhankalafat/Food-Mcp/blob/master/LICENSE)
+  
+</div>
 
-Teknolojik Altyapı
-Backend
+## 📋 İçindekiler
 
-Node.js & Express: Güçlü ve esnek bir API hizmeti
-PostgreSQL: Güvenilir ilişkisel veritabanı
-JWT: Güvenli kimlik doğrulama
-MCP (Model Context Protocol): Claude AI entegrasyonu için araçlar
+- [📌 Proje Hakkında](#-proje-hakkında)
+- [✨ Özellikler](#-özellikler)
+- [🚀 Teknolojiler](#-teknolojiler)
+- [📊 Claude AI Entegrasyonu](#-claude-ai-entegrasyonu)
+- [🔍 Örnek Kullanım](#-örnek-kullanım)
+- [⚙️ Kurulum](#️-kurulum)
+  - [Gereksinimler](#gereksinimler)
+  - [Adımlar](#adımlar)
+- [👨‍💻 Geliştiriciler](#-geliştiriciler)
+- [📄 Lisans](#-lisans)
 
-Frontend
+## 📌 Proje Hakkında
 
-React: Dinamik ve hızlı kullanıcı arayüzü
-Recharts: İleri seviye veri görselleştirme
-React Router: Sayfa yönetimi
-Responsive Tasarım: Tüm cihazlarda sorunsuz deneyim
+Food-Mcp, kullanıcıların günlük beslenme alışkanlıklarını takip etmelerine ve sağlıklı bir yaşam sürmelerine yardımcı olmayı amaçlayan modern bir uygulamadır. 
 
-Claude AI Entegrasyonu
+Claude AI entegrasyonu sayesinde sesli komutlar kullanarak besin kayıtlarınızı kolayca yönetebilirsiniz. Bu proje, modern web teknolojileri ve yapay zeka entegrasyonu kullanılarak oluşturulmuş kapsamlı bir beslenme takip sistemidir.
+
+## ✨ Özellikler
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>✅ Besin Takibi</h3>
+      <p>Günlük öğünlerinizi kaydedip kalori değerlerini otomatik hesaplayın.</p>
+    </td>
+    <td width="50%">
+      <h3>📊 Analiz ve Grafikler</h3>
+      <p>Beslenme verilerinizi çeşitli grafiklerle görselleştirin.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>📅 Zaman Bazlı Raporlar</h3>
+      <p>Günlük, haftalık ve aylık beslenme raporlarına erişin.</p>
+    </td>
+    <td width="50%">
+      <h3>👤 Profil Yönetimi</h3>
+      <p>Kişisel verilerinizi ve vücut ölçümlerinizi güncel tutun.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>🗣️ Claude AI Entegrasyonu</h3>
+      <p>Sesli komutlar ile veritabanı işlemlerini yapın.</p>
+    </td>
+    <td width="50%">
+      <h3>📱 Responsive Tasarım</h3>
+      <p>Her ekran boyutunda kusursuz görünüm ve kullanım.</p>
+    </td>
+  </tr>
+</table>
+
+## 🚀 Teknolojiler
+
+### Backend
+- **Node.js & Express:** Güçlü ve esnek bir API hizmeti
+- **PostgreSQL:** Güvenilir ilişkisel veritabanı
+- **JWT:** Güvenli kimlik doğrulama
+- **MCP (Model Context Protocol):** Claude AI entegrasyonu için araçlar
+
+### Frontend
+- **React:** Dinamik ve hızlı kullanıcı arayüzü
+- **Recharts:** İleri seviye veri görselleştirme
+- **React Router:** Sayfa yönetimi
+- **Responsive Tasarım:** Tüm cihazlarda sorunsuz deneyim
+
+## 📊 Claude AI Entegrasyonu
+
 Food-Mcp, Claude yapay zeka asistanı için MCP (Model Context Protocol) araçları geliştirerek beslenme takibini çok daha kolaylaştırır:
 
-food_add: Yeni besin kayıtları ekleyin
-food_list: Belirli bir gün veya öğüne ait besinleri listeleyin
-food_summary: Belirli bir tarih aralığındaki beslenme alışkanlıklarınızı analiz edin
+- **food_add:** Yeni besin kayıtları ekleyin
+- **food_list:** Belirli bir gün veya öğüne ait besinleri listeleyin
+- **food_summary:** Belirli bir tarih aralığındaki beslenme alışkanlıklarınızı analiz edin
 
-Örnek kullanım:
+## 🔍 Örnek Kullanım
+
+```text
 "Bugün öğle yemeğinde 1 porsiyon makarna ve salata yedim"
 "Dünkü kahvaltımda neler yemişim?"
 "Son bir haftanın beslenme özetini göster"
-Başlangıç
-Gereksinimler
+```
 
-Node.js (v16+)
-PostgreSQL
-Claude AI Desktop (opsiyonel)
+## ⚙️ Kurulum
 
-Kurulum Adımları
+### Gereksinimler
+- Node.js (v16+)
+- PostgreSQL
+- Claude AI Desktop (opsiyonel)
 
-Projeyi klonlayın:
-git clone https://github.com/Emirhankalafat/Food-Mcp.git
-cd Food-Mcp
+### Adımlar
 
-Backend ayarları:
-cd backend
-npm install
+1. **Projeyi klonlayın:**
+   ```bash
+   git clone https://github.com/Emirhankalafat/Food-Mcp.git
+   cd Food-Mcp
+   ```
 
-Veritabanını ayarlayın:
+2. **Backend ayarları:**
+   ```bash
+   cd backend
+   npm install
+   ```
 
-PostgreSQL'de foodmcp adında bir veritabanı oluşturun
-backend/db/schema.sql dosyasındaki komutları çalıştırın veya:
+3. **Veritabanını ayarlayın:**
+   
+   PostgreSQL'de foodmcp adında bir veritabanı oluşturun `backend/db/schema.sql` dosyasındaki komutları çalıştırın veya:
 
-sqlCREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  gender VARCHAR(50),
-  weight DECIMAL(5,2),
-  height DECIMAL(5,2),
-  api_key VARCHAR(64) UNIQUE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+   ```sql
+   CREATE TABLE users (
+     id SERIAL PRIMARY KEY,
+     email VARCHAR(255) UNIQUE NOT NULL,
+     password VARCHAR(255) NOT NULL,
+     name VARCHAR(255) NOT NULL,
+     gender VARCHAR(50),
+     weight DECIMAL(5,2),
+     height DECIMAL(5,2),
+     api_key VARCHAR(64) UNIQUE,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
 
-CREATE TABLE food_logs (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  date DATE NOT NULL,
-  meal_type VARCHAR(50) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(user_id, date, meal_type)
-);
+   CREATE TABLE food_logs (
+     id SERIAL PRIMARY KEY,
+     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+     -- Diğer tablolar...
+   );
+   ```
 
-CREATE TABLE food_items (
-  id SERIAL PRIMARY KEY,
-  food_log_id INTEGER REFERENCES food_logs(id) ON DELETE CASCADE,
-  name VARCHAR(255) NOT NULL,
-  quantity DECIMAL(8,2) NOT NULL,
-  unit VARCHAR(50) NOT NULL,
-  calories INTEGER NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+4. **Frontend ayarları:**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
 
-.env dosyası oluşturun:
-DATABASE_URL=postgresql://username:password@localhost:5432/foodmcp
-JWT_SECRET=your_secure_secret
-PORT=5000
+5. **Uygulamayı başlatın:**
+   ```bash
+   # Backend
+   cd ../backend
+   npm start
+   
+   # Frontend (yeni bir terminal)
+   cd ../frontend
+   npm start
+   ```
 
-Frontend ayarları:
-cd ../diet-tracker-frontend
-npm install
+## 👨‍💻 Geliştiriciler
 
-Uygulamayı başlatın:
+- [Emirhan Kalafat](https://github.com/Emirhankalafat) - Proje Sahibi
 
-Backend: npm run dev
-Frontend: npm start
-MCP (opsiyonel): cd ../mcp && npm start
+## 📄 Lisans
 
+Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır. Daha fazla bilgi için lisans dosyasını inceleyebilirsiniz.
 
-Tarayıcınızda http://localhost:3000 adresine gidin
+---
 
-Katkıda Bulunma
-Bu projeye katkıda bulunmak isterseniz:
-
-Repoyu forklayın
-Feature branch'i oluşturun (git checkout -b feature/YeniOzellik)
-Değişikliklerinizi commit edin (git commit -m 'Yeni özellik: XYZ eklendi')
-Branch'inize push yapın (git push origin feature/YeniOzellik)
-Pull Request açın
-
-Gelecek Planları
-
-🔄 Daha fazla AI entegrasyonu
-📱 Mobil uygulama geliştirme
-🌐 Besin veritabanı entegrasyonu
-🏋️ Egzersiz takibi modülü
-🧪 Kapsamlı test suite'i
-📊 Daha gelişmiş analitik özellikler
-🌍 Çoklu dil desteği
-
-Lisans
-Bu proje MIT Lisansı ile lisanslanmıştır.
-İletişim
-Emirhan Kalafat - GitHub
-Proje linki: https://github.com/Emirhankalafat/Food-Mcp
+<div align="center">
+  <p>Food-Mcp ile sağlıklı bir yaşam sürmek artık daha kolay! 🥗</p>
+  
+  <a href="https://github.com/Emirhankalafat/Food-Mcp/issues">Sorun Bildir</a> •
+  <a href="https://github.com/Emirhankalafat/Food-Mcp/pulls">Katkıda Bulun</a>
+</div>
