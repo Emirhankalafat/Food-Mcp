@@ -30,17 +30,17 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // API anahtarı oluşturuyoruz
-    const apikey = generateApiKey();
+    const api_key = generateApiKey();
 
     // Kullanıcıyı veritabanına ekliyoruz
     const insertQuery = `
       INSERT INTO users 
-      (email, password, name, gender, weight, height, apikey)
+      (email, password, name, gender, weight, height, api_key)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING id, email, name, apikey
+      RETURNING id, email, name, api_key
     `;
 
-    const values = [email, hashedPassword, name, gender, weight, height, apikey];
+    const values = [email, hashedPassword, name, gender, weight, height, api_key];
     const result = await pool.query(insertQuery, values);
     const newUser = result.rows[0];
 
@@ -125,7 +125,7 @@ export const regenerateApiKey = async (req, res) => {
     const newApiKey = generateApiKey();
     
     // Veritabanında güncelliyoruz
-    const updateQuery = 'UPDATE users SET apikey = $1 WHERE id = $2 RETURNING id, email, name, apikey';
+    const updateQuery = 'UPDATE users SET api_key = $1 WHERE id = $2 RETURNING id, email, name, api_key';
     const result = await pool.query(updateQuery, [newApiKey, userId]);
     
     // Kullanıcı yoksa hata döndürüyoruz
