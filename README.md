@@ -1,5 +1,4 @@
 Food-Mcp 🥗
-Show Image
 Food-Mcp, kullanıcıların günlük beslenme alışkanlıklarını takip etmelerine ve sağlıklı bir yaşam sürmeleri için gerekli verileri toplamalarına yardımcı olmayı amaçlayan bir uygulamadır. Claude AI entegrasyonu ile sesli komutlar kullanarak besin kayıtlarınızı kolayca yönetebilirsiniz.
 Proje Hakkında
 Bu proje, modern web teknolojileri ve yapay zeka entegrasyonu kullanılarak oluşturulmuş tam kapsamlı bir beslenme takip sistemidir. Kullanıcılar, günlük tükettikleri besinleri kaydedebilir, beslenme alışkanlıklarını analiz edebilir ve vücut ölçümlerini takip edebilir.
