@@ -1,5 +1,6 @@
 import pool from '../config/database.js';
-
+import { format, parseISO } from 'date-fns';
+import { tr } from 'date-fns/locale';
 // ➔ Besin Ekle
 export const addFoodEntry = async (req, res) => {
   try {
@@ -163,7 +164,12 @@ export const getFrequentFoods = async (req, res) => {
     const { limit = 10 } = req.query;
 
     const result = await pool.query(`
-      SELECT fi.name, COUNT(*) as frequency, AVG(fi.calories) as avg_calories, AVG(fi.quantity) as avg_quantity, fi.unit
+      SELECT 
+        fi.name, 
+        COUNT(*) as frequency, 
+        ROUND(AVG(fi.calories)::numeric, 2) as avg_calories, 
+        ROUND(AVG(fi.quantity)::numeric, 2) as avg_quantity, 
+        fi.unit
       FROM food_items fi
       JOIN food_logs fl ON fi.food_log_id = fl.id
       WHERE fl.user_id = $1
@@ -172,9 +178,18 @@ export const getFrequentFoods = async (req, res) => {
       LIMIT $2
     `, [userId, limit]);
 
-    res.json({ frequentFoods: result.rows });
+    // Verileri düzenle
+    const frequentFoods = result.rows.map(row => ({
+      name: row.name,
+      frequency: parseInt(row.frequency, 10),
+      avg_calories: parseFloat(row.avg_calories),
+      avg_quantity: parseFloat(row.avg_quantity),
+      unit: row.unit
+    }));
+
+    res.json({ frequentFoods });
   } catch (error) {
-    console.error('Sık tüketilen besinler hatası:', error.message);
+    console.error('Sık kullanılan besinler hatası:', error.message);
     res.status(500).json({ message: 'Sunucu hatası', error: error.message });
   }
 };
@@ -243,44 +258,54 @@ export const getWeeklyAnalysis = async (req, res) => {
     const userId = req.user.id;
     const { startDate } = req.query;
 
-    const endDateObj = new Date(startDate);
-    endDateObj.setDate(endDateObj.getDate() + 6);
-    const endDate = endDateObj.toISOString().split('T')[0];
+    // Başlangıç tarihinden itibaren 7 günlük aralık
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6);
 
     const result = await pool.query(`
-      SELECT fl.date, SUM(fi.calories) as daily_calories
-      FROM food_logs fl
-      JOIN food_items fi ON fi.food_log_id = fl.id
-      WHERE fl.user_id = $1 AND fl.date BETWEEN $2 AND $3
-      GROUP BY fl.date
-      ORDER BY fl.date
-    `, [userId, startDate, endDate]);
+      WITH date_series AS (
+        SELECT generate_series(
+          $2::date, 
+          $3::date, 
+          '1 day'
+        ) AS date
+      )
+      SELECT 
+        date_series.date,
+        COALESCE(SUM(fi.calories), 0) as daily_calories
+      FROM 
+        date_series
+      LEFT JOIN food_logs fl ON fl.date = date_series.date AND fl.user_id = $1
+      LEFT JOIN food_items fi ON fi.food_log_id = fl.id
+      GROUP BY date_series.date
+      ORDER BY date_series.date
+    `, [userId, startDate, endDate.toISOString().split('T')[0]]);
 
-    const dailyData = {};
-    let currentDate = new Date(startDate);
+    const dailyData = result.rows.map(row => ({
+      date: row.date,
+      dayOfWeek: format(new Date(row.date), 'EEE', { locale: tr }),
+      calories: parseInt(row.daily_calories)
+    }));
 
-    for (let i = 0; i < 7; i++) {
-      const dateStr = currentDate.toISOString().split('T')[0];
-      dailyData[dateStr] = { date: dateStr, calories: 0 };
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    result.rows.forEach(row => {
-      if (dailyData[row.date]) {
-        dailyData[row.date].calories = parseInt(row.daily_calories);
-      }
-    });
-
-    const caloriesArray = Object.values(dailyData).map(day => day.calories);
+    const caloriesArray = dailyData.map(day => day.calories);
     const totalCalories = caloriesArray.reduce((sum, cal) => sum + cal, 0);
     const avgCalories = Math.round(totalCalories / 7);
     const maxCalories = Math.max(...caloriesArray);
     const minCalories = Math.min(...caloriesArray.filter(cal => cal > 0)) || 0;
 
     res.json({
-      period: { startDate, endDate, weekNumber: getWeekNumber(new Date(startDate)) },
-      stats: { totalCalories, averageCalories: avgCalories, maxCalories, minCalories, daysTracked: caloriesArray.filter(c => c > 0).length },
-      dailyData: Object.values(dailyData)
+      period: { 
+        startDate, 
+        endDate: endDate.toISOString().split('T')[0] 
+      },
+      stats: { 
+        totalCalories, 
+        averageCalories: avgCalories, 
+        maxCalories, 
+        minCalories,
+        daysTracked: caloriesArray.filter(c => c > 0).length 
+      },
+      dailyData
     });
 
   } catch (error) {

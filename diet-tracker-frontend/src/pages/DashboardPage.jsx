@@ -32,6 +32,7 @@ const DashboardPage = () => {
         
         // Haftalık analiz verisini al
         const weeklyResult = await getWeeklyAnalysis(weekStartDate);
+        console.log('Haftalık Veri:', weeklyResult); // Veriyi kontrol et
         setWeeklyData(weeklyResult);
         
         // Öğün dağılımı için haftalık özet al
