@@ -26,7 +26,8 @@ export default {
       },
       unit: {
         type: "string",
-        description: "Ölçü birimi (adet, dilim, gram, ml vb.)"
+        enum: ["adet", "dilim", "gram", "ml", "litre"],
+        description: "Ölçü birimi (adet, dilim, gram, ml,litre)"
       },
       calories: {
         type: "number",
