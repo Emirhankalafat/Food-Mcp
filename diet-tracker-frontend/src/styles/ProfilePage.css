@@ -154,6 +154,48 @@
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
 }
+.api-key {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  word-break: break-all;
+}
+
+.api-key-value {
+  min-width: 150px;
+}
+
+.toggle-api-btn {
+  margin-left: 10px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-api-btn:hover {
+  background-color: #218838;
+}
+
+.copy-btn {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+  background-color: #0056b3;
+}
+
 
 /* Responsive Styles */
 @media (max-width: 768px) {

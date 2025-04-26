@@ -15,6 +15,17 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
+      // Token'ın geçerli olup olmadığını kontrol et
+      const tokenExpiration = localStorage.getItem('tokenExpiration');
+      if (tokenExpiration && Date.now() > parseInt(tokenExpiration)) {
+        // Token süresi dolmuşsa localStorage'dan temizle
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('tokenExpiration');
+        window.location.href = '/login'; // Login sayfasına yönlendir
+        return config;
+      }
+      
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

@@ -2,13 +2,13 @@ import pg from "pg";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+const { Pool } = pg;
 
 // .env dosyasını yükle
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 // URL formatını doğrula
-console.log("Bağlantı URL'i yükleniyor...");
 if (!process.env.DATABASE_URL) {
   console.error("HATA: DATABASE_URL çevre değişkeni tanımlanmamış!");
 }

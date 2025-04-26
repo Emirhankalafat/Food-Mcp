@@ -10,7 +10,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 const { Pool } = pg;
 
 // URL formatını doğrula
-console.log("Veritabanı bağlantısı başlatılıyor...");
+
 if (!process.env.DATABASE_URL) {
   console.error("HATA: DATABASE_URL çevre değişkeni tanımlanmamış!");
 }

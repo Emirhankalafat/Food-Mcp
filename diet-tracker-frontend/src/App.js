@@ -13,7 +13,7 @@ import FoodJournalPage from './pages/FoodJournalPage';
 // Components
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
-import PrivateRoute from './components/PrivateRoute'; // <-- Bunu ekledik!!
+import PrivateRoute from './components/PrivateRoute';
 
 // Styles
 import './App.css';

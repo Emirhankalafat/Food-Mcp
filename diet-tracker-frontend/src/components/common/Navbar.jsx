@@ -1,11 +1,19 @@
-// src/components/common/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FaUtensils, FaChartBar, FaUserCircle, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaBars, FaTimes } from 'react-icons/fa';
+import { 
+  FaUtensils, 
+  FaChartBar, 
+  FaUserCircle, 
+  FaSignOutAlt, 
+  FaSignInAlt, 
+  FaUserPlus, 
+  FaBars, 
+  FaTimes 
+} from 'react-icons/fa';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,11 +28,28 @@ const Navbar = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+    // Yükleme tamamlandıysa scroll event'ini ekle
+    if (!isLoading) {
+      window.addEventListener('scroll', handleScroll);
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isLoading]);
+
+  // Yükleme sırasında minimal içerik
+  if (isLoading) {
+    return (
+      <nav className="navbar">
+        <div className="navbar-container">
+          <div className="logo">
+            <FaUtensils className="logo-icon" />
+            <span className="logo-text">Diet Tracker</span>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   const handleLogout = () => {
     logout();
