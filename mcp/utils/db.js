@@ -1,62 +1,58 @@
-import pg from "pg"; 
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
+import pg from 'pg';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const { Pool } = pg;
 
-// .env dosyasını yükle
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-// URL formatını doğrula
+// SADECE 2 kez yukarı çıkıyoruz:
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+// DATABASE_URL kontrolü
 if (!process.env.DATABASE_URL) {
-  console.error("HATA: DATABASE_URL çevre değişkeni tanımlanmamış!");
+  console.error("❌ HATA: DATABASE_URL çevre değişkeni tanımlanmamış!");
+  process.exit(1);
 }
 
-// Veritabanı bağlantı havuzu
+// Pool oluştur
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
+  ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
-// Bağlantıyı test et
-export async function testConnection() {
+// Bağlantı eventleri
+pool.on('connect', () => {
+  console.error('✅ Veritabanı bağlantısı kuruldu');
+});
+
+pool.on('error', (err) => {
+  console.error('❌ Beklenmeyen veritabanı hatası:', err);
+});
+
+// Bağlantı testi fonksiyonu
+export const testDatabaseConnection = async () => {
+  let client;
   try {
-    const client = await pool.connect();
-    console.error("✅ Veritabanı bağlantısı başarılı");
-    client.release();
+    client = await pool.connect();
+    console.error('✅ Veritabanı bağlantı testi başarılı');
     return true;
-  } catch (err) {
-    console.error("❌ Veritabanı bağlantı hatası:", err.message);
-    console.error("DATABASE_URL formatını kontrol edin (şifre kısmı gizlenmiştir):");
-    
-    // URL'i güvenli bir şekilde görüntüle (şifreyi maskele)
+  } catch (error) {
+    console.error('❌ Veritabanı bağlantı testi başarısız:', error.message);
+
     if (process.env.DATABASE_URL) {
       const safeUrl = process.env.DATABASE_URL.replace(
         /postgresql:\/\/([^:]+):([^@]+)@/,
         "postgresql://$1:******@"
       );
-      console.error(safeUrl);
+      console.error("🔒 Kontrol edilmesi gereken bağlantı URL'i:", safeUrl);
     }
-    
-    return false;
-  }
-}
 
-// Tablo kontrol aracı
-export async function checkTables(requiredTables = ["users", "food_logs", "food_items"]) {
-  try {
-    const result = await pool.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public'
-    `);
-    const existing = result.rows.map(r => r.table_name);
-    const allExist = requiredTables.every(t => existing.includes(t));
-    console.error(`📋 Veritabanında mevcut tablolar: ${existing.join(", ")}`);
-    return allExist;
-  } catch (err) {
-    console.error("❌ Tablo kontrol hatası:", err.message);
     return false;
+  } finally {
+    if (client) {
+      try { client.release(); } catch (err) { console.error("❗ Client release hatası:", err.message); }
+    }
   }
-}
+};

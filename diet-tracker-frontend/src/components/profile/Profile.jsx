@@ -29,12 +29,18 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  const handleUpdateSuccess = (updatedUser) => {
-    setUser(updatedUser);
-    setIsEditing(false);
-    setSuccessMessage('Profil başarıyla güncellendi');
-    setTimeout(() => setSuccessMessage(''), 3000);
+  const handleUpdateSuccess = async () => {
+    try {
+      const freshData = await getUserProfile();  // API'den tekrar tam veriyi çekiyoruz
+      setUser(freshData);
+      setIsEditing(false);
+      setSuccessMessage('Profil başarıyla güncellendi');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Profil güncellemesi sonrası veri çekilemedi', error);
+    }
   };
+  
 
   const handleCopyApiKey = () => {
     if (user?.api_key) {

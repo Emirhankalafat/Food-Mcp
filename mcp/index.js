@@ -2,18 +2,27 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import dotenv from 'dotenv';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+// db bağlantısı import et
+import { testDatabaseConnection } from "./utils/db.js";
+
+// Doğru .env dosyasını yükle
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 // Araçları içe aktar
 import foodAdd from "./tools/food_add.js";
 import foodList from "./tools/food_list.js";
 import foodSummary from "./tools/food_summary.js";
 
-// Çevre değişkenlerini yükle
-dotenv.config();
-
-// Kullanıcının API anahtarını çevre değişkenlerinden al
-// Claude Desktop tarafından sağlanır
-process.env.API_KEY = process.env.API_KEY
+// Başlamadan önce veritabanı bağlantısını test et
+const dbReady = await testDatabaseConnection();
+if (!dbReady) {
+  console.error("❌ Veritabanı bağlantısı başarısız. MCP sunucusu başlatılamıyor.");
+  process.exit(1);
+}
 
 // Model Context Protocol (MCP) sunucusu oluştur
 const server = new Server(
@@ -24,7 +33,7 @@ const server = new Server(
 // Tüm araçları bir dizide topla
 const tools = [foodAdd, foodList, foodSummary];
 
-// Kayıtlı tool'ları console'a yaz
+// Araç isimlerini console'a yaz
 console.error(`📝 ${tools.length} adet MCP aracı kaydedildi:`);
 tools.forEach(tool => {
   console.error(`  - ${tool.name}: ${tool.description}`);
@@ -36,8 +45,7 @@ const toolMap = Object.fromEntries(tools.map(t => [t.name, t]));
 // İstek işleyici
 server.fallbackRequestHandler = async (request) => {
   const { method, params } = request;
-  
-  // MCP protokolü başlatma isteği
+
   if (method === "initialize") {
     console.error("🚀 İstemci bağlantısı başlatılıyor...");
     return {
@@ -46,8 +54,7 @@ server.fallbackRequestHandler = async (request) => {
       serverInfo: { name: "diet-tracker", version: "1.0.0" }
     };
   }
-  
-  // Araçları listeleme isteği
+
   if (method === "tools/list") {
     console.error("📋 Araçlar listeleniyor");
     return {
@@ -58,12 +65,11 @@ server.fallbackRequestHandler = async (request) => {
       }))
     };
   }
-  
-  // Araç çağırma isteği
+
   if (method === "tools/call") {
     const { name, arguments: args = {} } = params;
     console.error(`🔧 "${name}" aracı çalıştırılıyor, girdiler:`, args);
-    
+
     const tool = toolMap[name];
     if (!tool) {
       console.error(`❌ Tool bulunamadı: ${name}`);
@@ -74,9 +80,8 @@ server.fallbackRequestHandler = async (request) => {
         }
       };
     }
-    
+
     try {
-      // Aracı çağır ve sonucu döndür
       const result = await tool.handler(args);
       console.error(`✅ "${name}" aracı başarıyla çalıştırıldı`);
       return result;
@@ -91,14 +96,12 @@ server.fallbackRequestHandler = async (request) => {
       };
     }
   }
-  
-  // Diğer MCP protokolü istekleri
-  if (method === "resources/list" || method === "prompts/list") {
+
+  if (["resources/list", "prompts/list"].includes(method)) {
     console.error(`⚠️ Bilinmeyen metod çağrısı: ${method}`);
     return {};
   }
-  
-  // Bilinmeyen metodlar için boş yanıt döndür
+
   console.error(`⚠️ Bilinmeyen metod çağrısı: ${method}`);
   return {};
 };
