@@ -1,0 +1,92 @@
+/* src/styles/AuthPages.css */
+@import './variables.css';
+
+.login-page,
+.register-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.login-page h1,
+.register-page h1 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.login-page p,
+.register-page p {
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.login-container,
+.register-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.login-container h2,
+.register-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.login-container form,
+.register-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-container button,
+.register-container button {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.85rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.login-container a,
+.register-container a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.login-container a:hover,
+.register-container a:hover {
+  text-decoration: underline;
+  color: var(--primary-dark);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .login-container,
+  .register-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container,
+  .register-container {
+    padding: 1.25rem;
+  }
+  
+  .login-page h1,
+  .register-page h1 {
+    font-size: 1.5rem;
+  }
+}

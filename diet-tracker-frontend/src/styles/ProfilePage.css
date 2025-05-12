@@ -1,0 +1,249 @@
+/* src/styles/ProfilePage.css */
+@import './variables.css';
+
+.profile-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profile-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.profile-tabs .tab-button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--background-white);
+  box-shadow: var(--shadow-sm);
+  font-weight: 500;
+}
+
+.profile-content {
+  background-color: var(--background-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Profile Container Styles */
+.profile-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.profile-container h1 {
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-detail .label {
+  font-weight: 500;
+}
+
+.profile-bmi {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: var(--border-radius);
+}
+
+.bmi-value,
+.bmi-category {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.bmi-zayif {
+  color: #ffb300;
+}
+
+.bmi-normal {
+  color: var(--success-color);
+}
+
+.bmi-fazla-kilolu {
+  color: #ff9800;
+}
+
+.bmi-obez {
+  color: var(--error-color);
+}
+
+/* Update Profile Styles */
+.update-profile-container {
+  padding: 2rem;
+}
+
+.update-profile-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Password Change Styles */
+.password-change-container {
+  padding: 2rem;
+}
+
+.password-change-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+/* Delete Account Styles */
+.delete-account-container {
+  padding: 2rem;
+}
+
+.delete-account-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.warning-box {
+  background-color: #fff3e0;
+  border: 1px solid #ffcc80;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+}
+
+.warning-box h3 {
+  color: var(--warning-color);
+  margin-bottom: 0.5rem;
+}
+
+/* Other Profile Styles */
+.not-authenticated {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(--background-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+.api-key {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  word-break: break-all;
+}
+
+.api-key-value {
+  min-width: 150px;
+}
+
+.toggle-api-btn {
+  margin-left: 10px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-api-btn:hover {
+  background-color: #218838;
+}
+
+.copy-btn {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+  background-color: #0056b3;
+}
+
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .profile-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .profile-tabs .tab-button {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    padding: 0.75rem 1rem;
+  }
+  
+  .profile-container,
+  .update-profile-container,
+  .password-change-container,
+  .delete-account-container {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-tabs {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .profile-tabs .tab-button {
+    width: 100%;
+  }
+  
+  .profile-detail {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .profile-detail .label {
+    font-weight: 600;
+  }
+  
+  .bmi-value,
+  .bmi-category {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

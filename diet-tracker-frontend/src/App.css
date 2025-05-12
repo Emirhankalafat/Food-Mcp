@@ -1,0 +1,17 @@
+/* src/App.css */
+/* Ana CSS dosyası - Tüm stil dosyalarını import eder */
+
+/* Genel stiller ve değişkenler */
+@import './styles/variables.css';
+@import './styles/global.css';
+
+/* Bileşen stilleri */
+@import './styles/Navbar.css';
+@import './styles/Footer.css';
+
+/* Sayfa stilleri */
+@import './styles/HomePage.css';
+@import './styles/DashboardPage.css';
+@import './styles/FoodJournalPage.css';
+@import './styles/ProfilePage.css';
+@import './styles/AuthPages.css';

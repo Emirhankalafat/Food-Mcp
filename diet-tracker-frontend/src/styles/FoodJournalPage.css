@@ -1,0 +1,394 @@
+/* src/styles/FoodJournalPage.css */
+@import './variables.css';
+
+.food-journal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.food-journal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.food-journal-header h1 {
+  display: flex;
+  align-items: center;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.food-journal-header h1 svg {
+  margin-right: 0.5rem;
+}
+
+.view-tabs {
+  display: flex;
+  gap: 0.5rem;
+  background-color: var(--background-white);
+  padding: 0.25rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  color: var(--text-light);
+  transition: var(--transition);
+}
+
+.tab-button.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.tab-button:hover:not(.active) {
+  background-color: var(--background-light);
+}
+
+.date-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background-color: var(--background-white);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--background-light);
+  color: var(--text-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.nav-button:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.current-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: var(--background-white);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.date-selector label {
+  font-weight: 500;
+}
+
+.date-selector input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-sm);
+}
+
+.add-food-container {
+  background-color: var(--background-white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.add-food-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.food-list-container {
+  background-color: var(--background-white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.total-calories {
+  text-align: right;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--primary-light);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.meal-section {
+  margin-bottom: 2rem;
+}
+
+.meal-title {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  font-weight: 500;
+}
+
+.food-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.food-item:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--primary-light);
+}
+
+.food-details {
+  flex: 1;
+}
+
+.food-name {
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.food-quantity,
+.food-calories {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.food-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.edit-btn {
+  color: var(--secondary-color);
+}
+
+.delete-btn {
+  color: var(--error-color);
+}
+
+.food-edit-form {
+  width: 100%;
+}
+
+.search-container {
+  background-color: var(--background-white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.search-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.search-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-sm);
+}
+
+.search-results h3 {
+  margin-bottom: 1rem;
+  color: var(--primary-dark);
+}
+
+.results-table, 
+.frequent-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.results-table th, 
+.frequent-table th {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.results-table td, 
+.frequent-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.results-table tr:hover, 
+.frequent-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.btn-small {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.frequent-foods-container {
+  background-color: var(--background-white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.frequent-foods-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: var(--border-radius);
+}
+
+.food-list-empty {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--background-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal h3 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+}
+
+.modal .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.modal-actions button {
+  flex: 1;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .food-journal-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .view-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .date-navigation {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .date-selector {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .date-selector input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .results-table, 
+  .frequent-table {
+    display: block;
+    overflow-x: auto;
+  }
+  .results-table, 
+  .frequent-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  
+}
